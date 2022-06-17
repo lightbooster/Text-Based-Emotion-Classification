@@ -1,0 +1,72 @@
+name: 'bert-finetune'
+seed: 123
+cuda: 0
+
+classes_num: &classes_num 28
+
+trainer:
+  lr: 0.001
+  weight_decay: 0.00001
+  class_weights: 'sum'
+
+  max_iterations: 100000
+  validate_every_n_iterations: 714
+
+  warm_start: False
+  load_bert_from_common_checkpoint: False
+  continue_from_checkpoint: False
+  checkpoint_path: ''
+  output_dir: 'checkpoints/'
+
+model:
+  recipe:
+    # 'BERT' or 'FastText'
+    word_embedding: 'BERT'
+    multi_label: True
+    use_context: False
+    # 'sep' or 'cls-concat' or 'emo-concat'
+    context_type: 'sep'
+    freeze_emotion_embedding: False
+
+  classes_num: *classes_num
+  lstm:
+    hidden_size: 128
+    num_layers: 1
+    bidirectional: True
+    # 'sum' or 'max' - see implementation in data_utils.py
+    output_assemble_type: 'sum'
+    dropout: 0.0
+  classifier:
+    hidden_sizes: [ ]
+    dropout_p: 0.25
+
+  emotion_embedding_size: 128
+  emotion_dropout_p: 0.25
+
+bert:
+  checkpoint_path: '/home/asapozhnikov/projects/emotions/checkpoints/uncased_L-12_H-768_A-12/'
+  embedding_size: 768
+  text_preprocessing: True
+  finetune: False
+
+fasttext:
+  checkpoint_path: '/home/asapozhnikov/projects/emotions/checkpoints/cc.en.300.bin'
+  embedding_size: 300
+  text_preprocessing: True
+
+train_dataset:
+  batch_size: 128
+  path: '/home/asapozhnikov/projects/emotions/datasets/go_emotions/data/train_oversampled05.tsv'
+  num_workers: 4
+  prefetch_factor: 4
+  sampler_groups: 10
+  shuffle: True
+
+eval_dataset:
+  batch_size: 128
+  path: '/home/asapozhnikov/projects/emotions/datasets/go_emotions/data/dev.tsv'
+  num_workers: 1
+  prefetch_factor: 2
+  sampler_groups: 10
+  shuffle: False
+

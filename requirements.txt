@@ -1,0 +1,12 @@
+pandas
+numpy
+inflect
+pyspellchecker
+contractions
+emot
+flashtext
+fasttext
+hydra-core
+torch
+tensorboard
+transformers
